@@ -144,29 +144,29 @@ local function GrantProduct(player, product_id)
 end
 
 local function ProcessReceipt(receipt_info)
-	
-	local player = Players:GetPlayerByUserId(receipt_info.PlayerId)
-	
-	if player == nil then
-		return Enum.ProductPurchaseDecision.NotProcessedYet
+	if receipt_info ~= nil then
+		local player = Players:GetPlayerByUserId(receipt_info.PlayerId)
+
+		if player == nil then
+			return Enum.ProductPurchaseDecision.NotProcessedYet
+		end
+
+		local profile = GetPlayerProfileAsync(player)
+
+		if profile ~= nil then
+
+			return PurchaseIdCheckAsync(
+				profile,
+				receipt_info.PurchaseId,
+				function()
+					GrantProduct(player, receipt_info.ProductId)
+				end
+			)
+
+		else
+			return Enum.ProductPurchaseDecision.NotProcessedYet
+		end
 	end
-	
-	local profile = GetPlayerProfileAsync(player)
-	
-	if profile ~= nil then
-		
-		return PurchaseIdCheckAsync(
-			profile,
-			receipt_info.PurchaseId,
-			function()
-				GrantProduct(player, receipt_info.ProductId)
-			end
-		)
-		
-	else
-		return Enum.ProductPurchaseDecision.NotProcessedYet
-	end
-	
 end
 
 ----- Initialize -----
